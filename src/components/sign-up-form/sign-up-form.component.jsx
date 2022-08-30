@@ -7,44 +7,41 @@ import Button from '../button/button.component';
 const defaultformstate={displayName:'',
                           email:'',
                           password:'',
-                          confpass:''
+                          confpass:'',
                         };
 
 
-const SignUpForm = () =>
-{
+const SignUpForm = () =>{
   const [formfields,setformFields] = useState({defaultformstate})
   const {displayName,email,password,confpass} = formfields;
-  
+  //destucturing in formfields
   const resetFormFields = () => {
     setformFields(defaultformstate);
   };
 
   const handleSubmit=async(event)=>{
-    event.preventDefault();
+        event.preventDefault();
+        if (password!==confpass){
+          alert("password do not match")
+          return
+        }
 
-    if (password!==confpass){
-      alert("password do not match")
-      return
-    }
-
-    try{
-      const {user}  = await createAuthUserWithEmailAndPassword(
-        email,
-        password
-      );
-
-      await createUserDocumentFromAuth( user,{displayName});
-      resetFormFields();
-    }
-    catch (error) {
-      if (error.code === 'auth/email-already-in-use') {
-        alert('Cannot create user, email already in use');
-      } else {
-        console.log('user creation encountered an error', error);
-      }
-    }
-  };
+        try{
+          const {user}= await createAuthUserWithEmailAndPassword(
+            email,
+            password
+          );
+          await createUserDocumentFromAuth( user,{displayName});
+          resetFormFields();
+        }
+        catch (error) {
+          if (error.code === 'auth/email-already-in-use') {
+            alert('Cannot create user, email already in use');
+          } else {
+            console.log('user creation encountered an error', error);
+          }
+        }
+      };
 
   const handleChange=(event)=>{
     const {name,value} = event.target;
@@ -87,7 +84,7 @@ const SignUpForm = () =>
           type='password'
           required
           onChange={handleChange}
-          name='confPass'
+          name='confpass'
           value={confpass}
         />
         <Button type='submit'>Sign Up</Button>
